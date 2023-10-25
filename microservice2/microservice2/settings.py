@@ -27,9 +27,27 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'logstash': {
+            'level': 'INFO',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': 'logstash',
+            'port': 5000,
+            'version': 1,
+            'message_type': 'logstash',
+            'fqdn': False,
+        },
+    },
+    'root': {
+        'handlers': ['logstash'],
+        'level': 'DEBUG',
+    },
+}
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

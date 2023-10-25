@@ -1,6 +1,15 @@
 version: '3.9'
 
 services:
+  logstash:
+    image: "logstash:8.10.2"
+    volumes:
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - 5000:5000
+    networks:
+      - app_network
+
   nginx:
     build:
       context: ./nginx
@@ -9,6 +18,8 @@ services:
       - microservice2_web
     ports:
       - 80:80
+    networks:
+      - app_network
 
   microservice1_web:
     build:
@@ -17,6 +28,10 @@ services:
       - .:/microservice1/
     ports:
       - 8001:8000
+    networks:
+      - app_network
+    depends_on:
+      - logstash
 
   microservice2_web:
     build:
@@ -25,3 +40,11 @@ services:
       - .:/microservice2/
     ports:
       - 8002:8000
+    networks:
+      - app_network
+    depends_on:
+      - logstash
+
+networks:
+  app_network:
+    driver: bridge
